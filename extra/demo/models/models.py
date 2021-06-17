@@ -1,18 +1,26 @@
-# -*- coding: utf-8 -*-
-
-# from odoo import models, fields, api
+from odoo import models, fields, api
 
 
-# class demo(models.Model):
-#     _name = 'demo.demo'
-#     _description = 'demo.demo'
+class Demo(models.Model):
+    _name = 'demo.demo'
+    _description = 'demo.demo'
+    _rec_name = 'name_seq'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
-#     name = fields.Char()
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         for record in self:
-#             record.value2 = float(record.value) / 100
+    name = fields.Char(string="Name", required=True)
+    customer = fields.Char(string="Customer", required=True)
+    done_date = fields.Date(string="Done Date")
+    salesperson = fields.Char(string="Salesperson")
+    state = fields.Selection([('cancelled', 'Cancelled'), ('done', 'Done'), ('planned', 'Planned')], default='planned',
+                             string="Status", track_visibility='onchange')
+    crm_lead_id = fields.Many2one("crm.lead", string="Lead", required=True)
+    name_seq = fields.Char(string='Demo Order Reference', required=True, copy=False, readonly=True, index=True,
+                           default=lambda self: ('Demo'))
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name_seq', ('Demo')) == ('Demo'):
+            vals['name_seq'] = self.env['ir.sequence'].next_by_code('demo.demo.sequence') or ('Demo')
+        result = super(Demo, self).create(vals)
+        return result
+
