@@ -99,6 +99,18 @@
             </field>
         </record>
 
+        <record id="action_demo_second" model="ir.actions.act_window">
+            <field name="name">Demos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">demo.demo</field>
+            <field name="view_mode">form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your First Demo !
+                </p>
+            </field>
+        </record>
+
         <menuitem id="demo_demo_root" name="Demo" sequence="1" action="action_demo"/>
     </data>
 </odoo>

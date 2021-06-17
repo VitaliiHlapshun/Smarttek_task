@@ -17,10 +17,18 @@ class Demo(models.Model):
     name_seq = fields.Char(string='Demo Order Reference', required=True, copy=False, readonly=True, index=True,
                            default=lambda self: ('Demo'))
 
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super(Demo, self).default_get(fields_list)
+        a = self.env['crm.lead'].search([])
+        partner = a['partner_id']
+        res['customer'] = partner
+        return res
+
     @api.model
     def create(self, vals):
         if vals.get('name_seq', ('Demo')) == ('Demo'):
             vals['name_seq'] = self.env['ir.sequence'].next_by_code('demo.demo.sequence') or ('Demo')
         result = super(Demo, self).create(vals)
         return result
-
